@@ -21,13 +21,44 @@
     <div class="row">
       <div class="col-sm px-3 py-1">
 
-	        <nav aria-label="breadcrumb">
-  		        <ol class="breadcrumb">
-    		         <li class="breadcrumb-item"><a href="#">Home</a></li>
-    		         <li class="breadcrumb-item"><a href="#">Library</a></li>
-    		         <li class="breadcrumb-item active" aria-current="page">Data</li>
-  		        </ol>
-	       </nav>
+        <?php
+        // BREADCRUMBS
+        $url = getcwd();
+
+        // analyse l'url et retourne ses composants
+        $parts = parse_url($url);
+
+        // retourne les infos sur le chemin du répertoire
+        $path = pathinfo($parts['path']);
+
+        // explode sépare chaque élément, trim = supprime les espaces
+        $segments = explode('/', trim($path['dirname'],'/'));
+
+        $breadcrumbs[] = '<a href="/">Home</a>';
+        $crumb_path = '';
+
+        foreach ($segments as $segment)
+        {
+            $crumb_path .= '/' . $segment;
+
+            // ucfirst : majuscule première lettre du mot
+            $value = ucfirst($segment);
+
+            $breadcrumbs[] = '<a href="' . $crumb_path . '">' . $value . '</a>';
+        }
+
+        $breadcrumbs[] = ucwords(str_replace('_', ' ', $path['filename']));
+        $breadcrumbs   = implode(' > ', $breadcrumbs);
+
+        ?>
+
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><?php echo $breadcrumbs; ?></li>
+          </ol>
+        </nav>
+
+
 
       </div>
     </div>
@@ -37,8 +68,8 @@
   <div class="row">
     <div class="col-sm mt-3">
 <?php
-  $url = 'C:\wamp64\www\olivier\files-explorer';
-  $contents = scandir($url);
+  $url = getcwd(); //gets the current working directory
+  $contents = scandir($url); //scan the directory
 ?>
 
 <table class="table table-sm table-hover mb-5">
@@ -60,14 +91,15 @@
      $owner = "<span style='font-size:12px;'>".fileowner($item)."</span>";
 
      if (is_dir("$item")) {
-        echo "<tr><td><i class=\"fas fa-folder-open\"></i> <a href=\"".$item."\">$item</a></td><td>$size<td>$type</td><td>".$owner."</td><td>$date</td>";
+        echo "<tr><td><i class=\"fas fa-folder-open\"></i> <a href=\"$item\">$item</a></td><td>$size<td>$type</td><td>$owner</td><td>$date</td>";
      }
      else {
-        echo "<tr><td><i class=\"fas fa-file\"></i> <a href=\"".$item."\">$item</a></td><td>$size</td><td>$type</td><td>$owner</td><td>$date</td></tr>";
+        echo "<tr><td><i class=\"fas fa-file\"></i> <a href=\"$item\">$item</a></td><td>$size</td><td>$type</td><td>$owner</td><td>$date</td></tr>";
      }
-  }
+  } //for each
   echo "</tbody></table>";
 ?>
+
   </div>
 </div>
 </div>
