@@ -1,3 +1,5 @@
+<?php include_once 'functions.php'; ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -23,7 +25,8 @@
 
         <?php
         // BREADCRUMBS
-        $url = getcwd();
+        //$url = getcwd();
+        $url = "olivier/";
 
         // analyse l'url et retourne ses composants
         $parts = parse_url($url);
@@ -34,7 +37,7 @@
         // explode sépare chaque élément, trim = supprime les espaces
         $segments = explode('/', trim($path['dirname'],'/'));
 
-        $breadcrumbs[] = '<a href="/">Home</a>';
+        //  $breadcrumbs[] = '<a href="/">Home</a>';
         $crumb_path = '';
 
         foreach ($segments as $segment)
@@ -58,8 +61,6 @@
           </ol>
         </nav>
 
-
-
       </div>
     </div>
   </div>
@@ -67,10 +68,6 @@
 <div class="container">
   <div class="row">
     <div class="col-sm mt-3">
-<?php
-  $url = getcwd(); //gets the current working directory
-  $contents = scandir($url); //scan the directory
-?>
 
 <table class="table table-sm table-hover mb-5">
   <thead>
@@ -80,26 +77,60 @@
       <th scope="col">Type</th>
       <th scope="col">Propriétaire</th>
       <th scope="col">Date modif</th>
+      <th scope="col">Utils.</th>
     </tr>
   </thead>
   <tbody>
-<?php
-  foreach ($contents as $item) {
-     $size = "<span style='font-size:12px;'>".filesize($item)."</span>";
-     $type = "<span style='font-size:12px;'>".mime_content_type($item)."</span>";
-     $date = "<span style='font-size:12px;'>".date("d-m-Y H:i:s", filemtime($item))."</span>";
-     $owner = "<span style='font-size:12px;'>".fileowner($item)."</span>";
 
-     if (is_dir("$item")) {
-        echo "<tr><td><i class=\"fas fa-folder-open\"></i> <a href=\"$item\">$item</a></td><td>$size<td>$type</td><td>$owner</td><td>$date</td>";
-     }
-     else {
-        echo "<tr><td><i class=\"fas fa-file\"></i> <a href=\"$item\">$item</a></td><td>$size</td><td>$type</td><td>$owner</td><td>$date</td></tr>";
-     }
-  } //for each
-  echo "</tbody></table>";
-?>
+    <?php
+    $url = getcwd(); //gets the current working directory
+    $contents = scandir($url); //scan the directory
 
+      foreach ($contents as $item) {
+         $size = "<span style='font-size:12px;'>".formatSizeUnits(filesize($item))."</span>";
+         $type = "<span style='font-size:12px;'>".mime_content_type($item)."</span>";
+         $date = "<span style='font-size:12px;'>".date("d-m-Y H:i:s", filemtime($item))."</span>";
+         $owner = "<span style='font-size:12px;'>".fileowner($item)."</span>";
+
+         $finfo = finfo_open(FILEINFO_MIME_TYPE);
+         $type = finfo_file($finfo, $item);
+
+         if (isset($type) && in_array($type, array("image/png", "image/jpeg", "image/gif"))) {
+           //echo 'This is an image file';
+           $check = "<i class=\"far fa-image\"></i>";
+         }
+         else {
+           $check = "";
+         }
+
+         if (is_dir("$item")) {
+            echo "
+            <tr>
+              <td><i class='fas fa-folder-open'></i> <a href='$item'>$item</a></td>
+              <td>$size</td>
+              <td>$type</td>
+              <td>$owner</td>
+              <td>$date</td>
+            </tr>
+            ";
+         }
+         else {
+            echo "
+            <tr>
+              <td><i class='fas fa-file'> ".$check."</i> <a href='$item'>$item</a></td>
+              <td>$size</td>
+              <td>$type</td>
+              <td>$owner</td>
+              <td>$date</td>
+              <td><a href=\"supprimer.php?id=".$item."\" onclick=\"return confirm('Êtes-vous certain de vouloir supprimer ce fichier ?')\"><i class=\"fas fa-trash\"></i></a></td>
+            </tr>
+            ";
+         }
+      } //for each
+    ?>
+
+  </tbody>
+</table>
   </div>
 </div>
 </div>
