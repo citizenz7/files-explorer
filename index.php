@@ -63,23 +63,23 @@
 
         <?php
         if(isset($_GET['action']) && $_GET['action'] == 'nofile') {
-          echo "<div class=\"alert alert-danger alert-dismissible fade show\" role=\"alert\">
-            <i class=\"fas fa-exclamation-triangle\"></i> Erreur : nom de fichier vide
-            <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\">
-              <span aria-hidden=\"true\">&times;</span>
+          echo "<div class='alert alert-danger alert-dismissible fade show' role='alert'>
+            <i class='fas fa-exclamation-triangle'></i> Erreur : nom de fichier vide
+            <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
+              <span aria-hidden='true'>&times;</span>
             </button>
           </div>";
         }
 
         echo "
-          <form action=\"ajouter.php\" method=\"POST\">
-            <div class=\"form-group\">
-              <label for=\"name\">Créer un nouveau fichier : </label>
-              <input type=\"text\" class=\"form-control-sm\" name=\"name\" placeholder=\"Entrez un nom de fichier\" size=\"50\">
-              <button type=\"submit\" name=\"submit\" class=\"btn btn-primary btn-sm\">
+          <form action='ajouter.php' method='POST'>
+            <div class='form-group'>
+              <label for='name'>Créer un nouveau fichier : </label>
+              <input type='text' class='form-control-sm' name='name' placeholder='Entrez un nom de fichier' size='50'>
+              <button type='submit' name='submit' class='btn btn-primary btn-sm'>
                 Envoyer
               </button>
-              <button class=\"btn btn-secondary btn-sm\" type=\"reset\">
+              <button class='btn btn-secondary btn-sm' type='reset'>
                 Annuler
               </button>
             </div>
@@ -125,16 +125,16 @@
          // Todo: on peut aussi le faire avec un switch
          if (isset($type)) {
             if (in_array($type, array("image/png", "image/jpeg", "image/gif"))) {
-              $check = "<i class=\"far fa-image\"></i>";
+              $check = "<i class='far fa-image'></i>";
             }
             elseif(in_array($type, array("text/plain"))) {
-              $check = "<i class=\"fas fa-file\">";
+              $check = "<i class='fas fa-file'>";
             }
             elseif(in_array($type, array("text/x-php"))) {
-              $check = "<i class=\"fab fa-php\">";
+              $check = "<i class='fab fa-php'>";
             }
             elseif(in_array($type, array("text/x-php"))) {
-              $check = "<i class=\"fab fa-js\">";
+              $check = "<i class='fab fa-js'>";
             }
             else {
               $check = "<i class='fas fa-file-alt'>";
@@ -144,23 +144,23 @@
          if (is_dir("$item")) {
             echo "
             <tr>
-              <td><i class='fas fa-folder-open'></i> <a href='$item'>$item</a></td>
-              <td>$size</td>
-              <td>$type</td>
-              <td>$owner</td>
-              <td>$date</td>
+              <td><i class='fas fa-folder-open'></i> <a href='".$item."'>".$item."</a></td>
+              <td>".$size."</td>
+              <td>".$type."</td>
+              <td>".$owner."</td>
+              <td>".$date."</td>
             </tr>
             ";
          }
          else {
             echo "
             <tr>
-              <td>".$check."</i> <a href='$item'>$item</a></td>
-              <td>$size</td>
-              <td>$type</td>
-              <td>$owner</td>
-              <td>$date</td>
-              <td><a href=\"supprimer.php?id=".$item."\" onclick=\"return confirm('Êtes-vous certain de vouloir supprimer ce fichier ?')\"><i class=\"fas fa-trash\"></i></a></td>
+              <td>".$check."</i> <a href='".$item."'>$item</a></td>
+              <td>".$size."</td>
+              <td>".$type."</td>
+              <td>".$owner."</td>
+              <td>".$date."</td>
+              <td><a href='supprimer.php?id=".$item."' onclick='return confirm('Êtes-vous certain de vouloir supprimer ce fichier ?')'><i class='fas fa-trash'></i></a></td>
             </tr>
             ";
          }
