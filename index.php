@@ -118,6 +118,25 @@
           </div>";
         }
 
+        if(isset($_GET['action']) && $_GET['action'] == 'norep') {
+          echo "<div class='alert alert-danger alert-dismissible fade show' role='alert'>
+            <i class='fas fa-exclamation-triangle'></i> Erreur : nom de répertoire vide
+            <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
+              <span aria-hidden='true'>&times;</span>
+            </button>
+          </div>";
+        }
+
+        if(isset($_GET['action']) && $_GET['action'] == 'rep_exists') {
+          echo "<div class='alert alert-danger alert-dismissible fade show' role='alert'>
+            <i class='fas fa-exclamation-triangle'></i> Le répertoire existe déjà
+            <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
+              <span aria-hidden='true'>&times;</span>
+            </button>
+          </div>";
+        }
+
+        // créer un fichier
         echo "
           <form action='ajouter.php' method='POST'>
             <div class='form-group'>
@@ -132,6 +151,23 @@
             </div>
           </form>
         ";
+
+        // créer un répertoire
+        echo "
+          <form action='ajouterrep.php' method='POST'>
+            <div class='form-group'>
+              <label for='name'>Créer un nouveau répertoire : </label>
+              <input type='text' class='form-control-sm' name='namerep' placeholder='Entrez un nom de répertoire' size='50'>
+              <button onclick=\"return confirm('Êtes-vous certain de vouloir créer ce répertoire ?')\" type='submit' name='submitrep' class='btn btn-primary btn-sm'>
+                Envoyer
+              </button>
+              <button class='btn btn-secondary btn-sm' type='reset'>
+                Annuler
+              </button>
+            </div>
+          </form>
+        ";
+
         ?>
 
       </div>
@@ -202,6 +238,7 @@
               <td class='smalltext'>".$type."</td>
               <td class='smalltext'>".$owner."</td>
               <td class='smalltext'>".$date."</td>
+              <td class='lastcol'><a href='supprimerrep.php?id=".$item."' onclick=\"return confirm('Êtes-vous certain de vouloir supprimer ce répertoire ?')\"><i class='fas fa-trash'></i></a></td>
             </tr>
             </form>
             ";
