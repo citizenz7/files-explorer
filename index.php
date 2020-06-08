@@ -61,6 +61,31 @@
           </ol>
         </nav>
 
+        <?php
+          echo "
+          <form action=\"ajouter.php\" method=\"GET\">
+            <div class=\"form-group\">
+              <label for=\"name\">Nom du fichier : </label>
+              <input type=\"text\" class=\"form-control-sm\" name=\"name\" size=\"50\">
+              <button onclick=\"return confirm('Êtes-vous certain de vouloir ajouter ce fichier ?')\" type=\"submit\" name=\"submit\" class=\"btn btn-primary\">
+                Créer un nouveau fichier
+              </button>
+            </div>
+          </form>
+          ";
+
+          if (isset($_GET['action']) && !empty($_GET['action']) == "nofile") {
+            echo "
+            <div class=\"alert alert-danger alert-dismissible fade show\" role=\"alert\">
+              Erreur : nom de fichier vide
+              <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\">
+                <span aria-hidden=\"true\">&times;</span>
+              </button>
+            </div>
+            ";
+          }
+        ?>
+
       </div>
     </div>
   </div>
@@ -88,20 +113,32 @@
 
       foreach ($contents as $item) {
          $size = "<span style='font-size:12px;'>".formatSizeUnits(filesize($item))."</span>";
-         $type = "<span style='font-size:12px;'>".mime_content_type($item)."</span>";
+         //$type = "<span style='font-size:12px;'>".mime_content_type($item)."</span>";
          $date = "<span style='font-size:12px;'>".date("d-m-Y H:i:s", filemtime($item))."</span>";
          $owner = "<span style='font-size:12px;'>".fileowner($item)."</span>";
 
+         // on recherche le type de fichier
          $finfo = finfo_open(FILEINFO_MIME_TYPE);
          $type = finfo_file($finfo, $item);
 
-         if (isset($type) && in_array($type, array("image/png", "image/jpeg", "image/gif"))) {
-           //echo 'This is an image file';
-           $check = "<i class=\"far fa-image\"></i>";
-         }
-         else {
-           $check = "";
-         }
+         // Todo: on peut aussi le faire avec un switch
+         if (isset($type)) {
+            if (in_array($type, array("image/png", "image/jpeg", "image/gif"))) {
+              $check = "<i class=\"far fa-image\"></i>";
+            }
+            elseif(in_array($type, array("text/plain"))) {
+              $check = "<i class=\"fas fa-file\">";
+            }
+            elseif(in_array($type, array("text/x-php"))) {
+              $check = "<i class=\"fab fa-php\">";
+            }
+            elseif(in_array($type, array("text/x-php"))) {
+              $check = "<i class=\"fab fa-js\">";
+            }
+            else {
+              $check = "<i class='fas fa-file-alt'>";
+            }
+          }
 
          if (is_dir("$item")) {
             echo "
@@ -117,7 +154,7 @@
          else {
             echo "
             <tr>
-              <td><i class='fas fa-file'> ".$check."</i> <a href='$item'>$item</a></td>
+              <td>".$check."</i> <a href='$item'>$item</a></td>
               <td>$size</td>
               <td>$type</td>
               <td>$owner</td>
