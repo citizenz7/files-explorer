@@ -9,6 +9,7 @@
   <title>Files manager</title>
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -26,7 +27,7 @@
         <?php
         // BREADCRUMBS
         //$url = getcwd();
-        $url = "olivier/";
+        $url = "files-explorer";
 
         // analyse l'url et retourne ses composants
         $parts = parse_url($url);
@@ -71,12 +72,21 @@
           </div>";
         }
 
+        if(isset($_GET['action']) && $_GET['action'] == 'file_exists') {
+          echo "<div class='alert alert-danger alert-dismissible fade show' role='alert'>
+            <i class='fas fa-exclamation-triangle'></i> Le fichier existe déjà
+            <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
+              <span aria-hidden='true'>&times;</span>
+            </button>
+          </div>";
+        }
+
         echo "
           <form action='ajouter.php' method='POST'>
             <div class='form-group'>
               <label for='name'>Créer un nouveau fichier : </label>
               <input type='text' class='form-control-sm' name='name' placeholder='Entrez un nom de fichier' size='50'>
-              <button type='submit' name='submit' class='btn btn-primary btn-sm'>
+              <button onclick=\"return confirm('Êtes-vous certain de vouloir ajouter ce fichier ?')\" type='submit' name='submit' class='btn btn-primary btn-sm'>
                 Envoyer
               </button>
               <button class='btn btn-secondary btn-sm' type='reset'>
@@ -103,7 +113,7 @@
       <th scope="col">Type</th>
       <th scope="col">Propriétaire</th>
       <th scope="col">Date modif</th>
-      <th scope="col">Utils.</th>
+      <th scope="col">Suppr.</th>
     </tr>
   </thead>
   <tbody>
@@ -113,10 +123,10 @@
     $contents = scandir($url); //scan the directory
 
       foreach ($contents as $item) {
-         $size = "<span style='font-size:12px;'>".formatSizeUnits(filesize($item))."</span>";
-         //$type = "<span style='font-size:12px;'>".mime_content_type($item)."</span>";
-         $date = "<span style='font-size:12px;'>".date("d-m-Y H:i:s", filemtime($item))."</span>";
-         $owner = "<span style='font-size:12px;'>".fileowner($item)."</span>";
+         $size = formatSizeUnits(filesize($item));
+         //$type = mime_content_type($item);
+         $date = date("d-m-Y H:i:s", filemtime($item));
+         $owner = fileowner($item);
 
          // on recherche le type de fichier
          $finfo = finfo_open(FILEINFO_MIME_TYPE);
@@ -141,26 +151,25 @@
             }
           }
 
-         if (is_dir("$item")) {
-            echo "
-            <tr>
+         if (is_dir($item)) {
+            echo "<tr>
               <td><i class='fas fa-folder-open'></i> <a href='".$item."'>".$item."</a></td>
-              <td>".$size."</td>
-              <td>".$type."</td>
-              <td>".$owner."</td>
-              <td>".$date."</td>
+              <td class='smalltext'>".$size."</td>
+              <td class='smalltext'>".$type."</td>
+              <td class='smalltext'>".$owner."</td>
+              <td class='smalltext'>".$date."</td>
             </tr>
             ";
          }
          else {
             echo "
             <tr>
-              <td>".$check."</i> <a href='".$item."'>$item</a></td>
-              <td>".$size."</td>
-              <td>".$type."</td>
-              <td>".$owner."</td>
-              <td>".$date."</td>
-              <td><a href='supprimer.php?id=".$item."' onclick='return confirm('Êtes-vous certain de vouloir supprimer ce fichier ?')'><i class='fas fa-trash'></i></a></td>
+              <td class='firstcol'>".$check."</i> <a href='".$item."'>$item</a></td>
+              <td class='smalltext'>".$size."</td>
+              <td class='smalltext'>".$type."</td>
+              <td class='smalltext'>".$owner."</td>
+              <td class='smalltext'>".$date."</td>
+              <td class='lastcol'><a href='supprimer.php?id=".$item."' onclick=\"return confirm('Êtes-vous certain de vouloir supprimer ce fichier ?')\"><i class='fas fa-trash'></i></a></td>
             </tr>
             ";
          }

@@ -9,16 +9,24 @@ if (isset($_POST['submit'])) {
   }
 
   else {
-    $nom_file = htmlspecialchars($_POST['name']);
+    // Si le fichier n'existe pas...
+    if (!file_exists($_POST['name'])) {
+      $nom_file = htmlspecialchars($_POST['name']);
 
-    // création du fichier
-    $f = fopen($nom_file, "x+");
+      // création du fichier
+      $f = fopen($nom_file, "x+");
 
-    // fermeture
-    fclose($f);
+      // fermeture
+      fclose($f);
 
-    // on renvoie sur la page principale du files explorer
-    header('Location: ../files-explorer');
+      // on renvoie sur la page principale du files explorer
+      header('Location: ../files-explorer');
+    }
+    else {
+      // si le fichier existe déjà on renvoie sur un message d'erreur
+      header('Location: index.php?action=file_exists');
+      exit();
+    }
   }
 
 }
