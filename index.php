@@ -62,28 +62,29 @@
         </nav>
 
         <?php
-          echo "
-          <form action=\"ajouter.php\" method=\"GET\">
+        if(isset($_GET['action']) && $_GET['action'] == 'nofile') {
+          echo "<div class=\"alert alert-danger alert-dismissible fade show\" role=\"alert\">
+            <i class=\"fas fa-exclamation-triangle\"></i> Erreur : nom de fichier vide
+            <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\">
+              <span aria-hidden=\"true\">&times;</span>
+            </button>
+          </div>";
+        }
+
+        echo "
+          <form action=\"ajouter.php\" method=\"POST\">
             <div class=\"form-group\">
-              <label for=\"name\">Nom du fichier : </label>
-              <input type=\"text\" class=\"form-control-sm\" name=\"name\" size=\"50\">
-              <button onclick=\"return confirm('Êtes-vous certain de vouloir ajouter ce fichier ?')\" type=\"submit\" name=\"submit\" class=\"btn btn-primary\">
-                Créer un nouveau fichier
+              <label for=\"name\">Créer un nouveau fichier : </label>
+              <input type=\"text\" class=\"form-control-sm\" name=\"name\" placeholder=\"Entrez un nom de fichier\" size=\"50\">
+              <button type=\"submit\" name=\"submit\" class=\"btn btn-primary btn-sm\">
+                Envoyer
+              </button>
+              <button class=\"btn btn-secondary btn-sm\" type=\"reset\">
+                Annuler
               </button>
             </div>
           </form>
-          ";
-
-          if (isset($_GET['action']) && !empty($_GET['action']) == "nofile") {
-            echo "
-            <div class=\"alert alert-danger alert-dismissible fade show\" role=\"alert\">
-              Erreur : nom de fichier vide
-              <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\">
-                <span aria-hidden=\"true\">&times;</span>
-              </button>
-            </div>
-            ";
-          }
+        ";
         ?>
 
       </div>

@@ -1,15 +1,15 @@
 <?php
 // si on a cliqué sur le bouton "Créer un nouveau fichier"...
-if (isset($_GET['submit'])) {
+if (isset($_POST['submit'])) {
 
   // si le nom de fichier est vide
-  if (empty($_GET['name'])) {
-    header('Location: ../files-explorer/index.php?action=nofile');
-    exit;
+  if (empty($_POST['name'])) {
+    header('Location: index.php?action=nofile');
+    exit();
   }
 
   else {
-    $nom_file = htmlspecialchars($_GET['name']);
+    $nom_file = htmlspecialchars($_POST['name']);
 
     // création du fichier
     $f = fopen($nom_file, "x+");
