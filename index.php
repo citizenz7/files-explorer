@@ -25,8 +25,20 @@
       <div class="col-sm px-3 py-1">
 
         <?php
+
+        if (isset($_POST['selectedfile'])) {
+          $selectedfile = $_POST['selectedfile'];
+          if (chdir($selectedfile)) {
+            chdir($selectedfile);
+          }
+          else {
+            chdir(getcwd());
+          }
+        }
+
         // BREADCRUMBS
-        //$url = getcwd();
+
+        /*
         $url = "files-explorer";
 
         // analyse l'url et retourne ses composants
@@ -38,7 +50,7 @@
         // explode sépare chaque élément, trim = supprime les espaces
         $segments = explode('/', trim($path['dirname'],'/'));
 
-        //  $breadcrumbs[] = '<a href="/">Home</a>';
+        $breadcrumbs[] = '<a href="/">Accueil</a>';
         $crumb_path = '';
 
         foreach ($segments as $segment)
@@ -53,14 +65,39 @@
 
         $breadcrumbs[] = ucwords(str_replace('_', ' ', $path['filename']));
         $breadcrumbs   = implode(' > ', $breadcrumbs);
+        */
 
+        $def = "index";
+        $dPath = $_SERVER['PHP_SELF'];
+        $dChunks = explode("/", $dPath);
+
+        echo('<p class="bg-primary text-white px-3 py-2"><a class="text-white" href="/">Accueil</a><span> > </span>');
+        for($i=1; $i<count($dChunks); $i++ ){
+	         echo('<a class="text-white" href="/');
+	          for($j=1; $j<=$i; $j++ ){
+		            echo($dChunks[$j]);
+		              if($j!=count($dChunks)-1){ echo("/");}
+	          }
+
+	          if($i==count($dChunks)-1){
+		            $prChunks = explode(".", $dChunks[$i]);
+		              if ($prChunks[0] == $def) $prChunks[0] = "";
+		                $prChunks[0] = $prChunks[0] . "</a>";
+	          }
+	          else $prChunks[0]=$dChunks[$i] . '</a><span> > </span>';
+	           echo('">');
+	           echo(str_replace("_" , " " , $prChunks[0]));
+             echo "</p>";
+        }
         ?>
 
+        <!--
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb">
             <li class="breadcrumb-item"><?php echo $breadcrumbs; ?></li>
           </ol>
         </nav>
+      -->
 
         <?php
         if(isset($_GET['action']) && $_GET['action'] == 'nofile') {
@@ -152,13 +189,21 @@
           }
 
          if (is_dir($item)) {
-            echo "<tr>
-              <td><i class='fas fa-folder-open'></i> <a href='".$item."'>".$item."</a></td>
+            echo "
+            <form method=\"POST\">
+            <tr>
+              <td>
+                <i class='fas fa-folder-open'></i>
+                <input type=\"hidden\" name=\"selectedfile\" value=\"".realpath($item). "\"><a href=\"".$_SERVER['REQUEST_URI']."/".$item."\">
+                <input type=\"submit\" value=\"".$item."\">
+                </a>
+              </td>
               <td class='smalltext'>".$size."</td>
               <td class='smalltext'>".$type."</td>
               <td class='smalltext'>".$owner."</td>
               <td class='smalltext'>".$date."</td>
             </tr>
+            </form>
             ";
          }
          else {
