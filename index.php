@@ -110,13 +110,13 @@ if (isset($_POST['selectedfile'])) {
 
             while(($file = readdir($opendir)) !== false) {
 
-              $size = formatSizeUnits(filesize($file));
-              $date = date("d-m-Y H:i:s", filemtime($file));
-              $owner = fileowner($file);
+              $size = formatSizeUnits(filesize($dir.$file));
+              $date = date("d-m-Y H:i:s", filemtime($dir.$file));
+              $owner = fileowner($dir.$file);
 
               // on recherche le type de fichier
               $finfo = finfo_open(FILEINFO_MIME_TYPE);
-              $type = finfo_file($finfo, $file);
+              $type = finfo_file($finfo, $dir.$file);
 
               echo '
                 <tr>
