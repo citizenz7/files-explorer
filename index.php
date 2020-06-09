@@ -34,15 +34,95 @@ if (isset($_POST['selectedfile'])) {
 
 <body>
 
-  <div class="container">
+  <div class="container card mb-5">
+
     <div class="row">
-      <div class="col-sm px-3 py-3 mt-3">
-        <h2>Files Manager</h2>
+      <div class="col-sm px-3 py-3 mt-3 bg-dark text-white text-center">
+        <h1>Files Manager</h1>
       </div>
     </div>
 
     <div class="row">
       <div class="col-sm px-3 py-1">
+
+        <?php
+        if(isset($_GET['action']) && $_GET['action'] == 'nofile') {
+          echo "<div class='alert alert-danger alert-dismissible fade show' role='alert'>
+            <i class='fas fa-exclamation-triangle'></i> Erreur : nom de fichier vide
+            <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
+              <span aria-hidden='true'>&times;</span>
+            </button>
+          </div>";
+        }
+
+        if(isset($_GET['action']) && $_GET['action'] == 'file_exists') {
+          echo "<div class='alert alert-danger alert-dismissible fade show' role='alert'>
+            <i class='fas fa-exclamation-triangle'></i> Le fichier existe déjà
+            <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
+              <span aria-hidden='true'>&times;</span>
+            </button>
+          </div>";
+        }
+
+        if(isset($_GET['action']) && $_GET['action'] == 'norep') {
+          echo "<div class='alert alert-danger alert-dismissible fade show' role='alert'>
+            <i class='fas fa-exclamation-triangle'></i> Erreur : nom de répertoire vide
+            <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
+              <span aria-hidden='true'>&times;</span>
+            </button>
+          </div>";
+        }
+
+        if(isset($_GET['action']) && $_GET['action'] == 'rep_exists') {
+          echo "<div class='alert alert-danger alert-dismissible fade show' role='alert'>
+            <i class='fas fa-exclamation-triangle'></i> Le répertoire existe déjà
+            <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
+              <span aria-hidden='true'>&times;</span>
+            </button>
+          </div>";
+        }
+
+        echo "</div>";
+        echo "</div>";
+
+        // créer un fichier
+        echo "
+        <div class=\"row\">
+          <div class=\"col-sm card p-2 m-2\">
+            <form action='ajouter.php' method='POST'>
+              <div class='form-group'>
+                <label for='name'>Créer un nouveau fichier : </label><br>
+                <input type='text' class='form-control-sm' name='name' placeholder='Entrez un nom de fichier' size='50'>
+                <button onclick=\"return confirm('Êtes-vous certain de vouloir ajouter ce fichier ?')\" type='submit' name='submit' class='btn btn-primary btn-sm'>
+                  Envoyer
+                  </button>
+                  <button class='btn btn-secondary btn-sm' type='reset'>
+                    Annuler
+                  </button>
+              </div>
+            </form>
+          </div>
+        ";
+
+        // créer un répertoire
+        echo "
+        <div class=\"col-sm card p-2 m-2\">
+          <form action='ajouterrep.php' method='POST'>
+            <div class='form-group'>
+              <label for='name'>Créer un nouveau répertoire : </label><br>
+              <input type='text' class='form-control-sm' name='namerep' placeholder='Entrez un nom de répertoire' size='50'>
+              <button onclick=\"return confirm('Êtes-vous certain de vouloir créer ce répertoire ?')\" type='submit' name='submitrep' class='btn btn-primary btn-sm'>
+                Envoyer
+              </button>
+              <button class='btn btn-secondary btn-sm' type='reset'>
+                Annuler
+              </button>
+            </div>
+          </form>
+        </div>
+      </div><!-- //row -->
+        ";
+        ?>
 
         <?php
         // BREADCRUMBS
@@ -86,7 +166,7 @@ if (isset($_POST['selectedfile'])) {
               $opendir = opendir('./') or die();
             }
 
-            echo '<a href="?dir=./">Root</a> '.$dir;
+            echo '<div class="bg-info mt-3 text-white px-3 py-2">Chemin : <a class="text-white" href="?dir=./">Root</a> '.$dir.'</div>';
 
             if(substr($dir, 0, 2) == './') $dir = substr($dir, 2);
 
@@ -147,7 +227,6 @@ if (isset($_POST['selectedfile'])) {
             closedir($opendir);
 
 
-
         /*
         $def = "index";
         $dPath = $_SERVER['PHP_SELF'];
@@ -190,82 +269,7 @@ if (isset($_POST['selectedfile'])) {
         </nav>
         -->
 
-        <?php
-        if(isset($_GET['action']) && $_GET['action'] == 'nofile') {
-          echo "<div class='alert alert-danger alert-dismissible fade show' role='alert'>
-            <i class='fas fa-exclamation-triangle'></i> Erreur : nom de fichier vide
-            <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
-              <span aria-hidden='true'>&times;</span>
-            </button>
-          </div>";
-        }
 
-        if(isset($_GET['action']) && $_GET['action'] == 'file_exists') {
-          echo "<div class='alert alert-danger alert-dismissible fade show' role='alert'>
-            <i class='fas fa-exclamation-triangle'></i> Le fichier existe déjà
-            <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
-              <span aria-hidden='true'>&times;</span>
-            </button>
-          </div>";
-        }
-
-        if(isset($_GET['action']) && $_GET['action'] == 'norep') {
-          echo "<div class='alert alert-danger alert-dismissible fade show' role='alert'>
-            <i class='fas fa-exclamation-triangle'></i> Erreur : nom de répertoire vide
-            <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
-              <span aria-hidden='true'>&times;</span>
-            </button>
-          </div>";
-        }
-
-        if(isset($_GET['action']) && $_GET['action'] == 'rep_exists') {
-          echo "<div class='alert alert-danger alert-dismissible fade show' role='alert'>
-            <i class='fas fa-exclamation-triangle'></i> Le répertoire existe déjà
-            <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
-              <span aria-hidden='true'>&times;</span>
-            </button>
-          </div>";
-        }
-
-        // créer un fichier
-        echo "
-        <div class=\"row\">
-          <div class=\"col-sm card p-2 m-2\">
-            <form action='ajouter.php' method='POST'>
-              <div class='form-group'>
-                <label for='name'>Créer un nouveau fichier : </label><br>
-                <input type='text' class='form-control-sm' name='name' placeholder='Entrez un nom de fichier' size='50'>
-                <button onclick=\"return confirm('Êtes-vous certain de vouloir ajouter ce fichier ?')\" type='submit' name='submit' class='btn btn-primary btn-sm'>
-                  Envoyer
-                  </button>
-                  <button class='btn btn-secondary btn-sm' type='reset'>
-                    Annuler
-                  </button>
-              </div>
-            </form>
-          </div>
-        ";
-
-        // créer un répertoire
-        echo "
-        <div class=\"col-sm card p-2 m-2\">
-          <form action='ajouterrep.php' method='POST'>
-            <div class='form-group'>
-              <label for='name'>Créer un nouveau répertoire : </label><br>
-              <input type='text' class='form-control-sm' name='namerep' placeholder='Entrez un nom de répertoire' size='50'>
-              <button onclick=\"return confirm('Êtes-vous certain de vouloir créer ce répertoire ?')\" type='submit' name='submitrep' class='btn btn-primary btn-sm'>
-                Envoyer
-              </button>
-              <button class='btn btn-secondary btn-sm' type='reset'>
-                Annuler
-              </button>
-            </div>
-          </form>
-        </div>
-      </div><!-- //row -->
-        ";
-
-        ?>
 
       </div>
     </div>
@@ -366,7 +370,10 @@ if (isset($_POST['selectedfile'])) {
 </div>
 </div>
 -->
-
+</div>
+<div class="container text-center pb-5">
+  <i class="fab fa-creative-commons-pd"></i> Olivier Prieur - Access Code School Nevers (58000) - Juin 2020
+</div>
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
