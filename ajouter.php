@@ -1,4 +1,5 @@
 <?php
+
 // si on a cliqué sur le bouton "Créer un nouveau fichier"...
 if (isset($_POST['submit'])) {
 
@@ -28,6 +29,10 @@ if (isset($_POST['submit'])) {
       exit();
     }
   }
-
 }
+
+else {
+    echo "Vous ne pouvez pas accéder à cette page directement.";
+}
+
 ?>

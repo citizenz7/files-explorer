@@ -28,4 +28,12 @@ function formatSizeUnits($bytes)
 
         return $bytes;
 }
+
+function simplePath($dir) {
+  if($dir == '') return './';
+    $dir = str_replace('//', '/', str_replace('\\', '/', $dir));
+    if($dir[strlen($dir)-1] != '/') $dir .= '/';
+    return $dir;
+}
+
 ?>

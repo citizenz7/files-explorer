@@ -24,6 +24,9 @@ if (isset($_POST['submitrep'])) {
       exit();
     }
   }
+}
 
+else {
+    echo "Vous ne pouvez pas accéder à cette page directement.";
 }
 ?>
