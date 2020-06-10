@@ -47,7 +47,7 @@ if (isset($_POST['selectedfile'])) {
 
         <?php
         if(isset($_GET['action']) && $_GET['action'] == 'nofile') {
-          echo "<div class='alert alert-danger alert-dismissible fade show' role='alert'>
+          echo "<div class='alert alert-danger alert-dismissible fade show mt-2' role='alert'>
             <i class='fas fa-exclamation-triangle'></i> Erreur : nom de fichier vide
             <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
               <span aria-hidden='true'>&times;</span>
@@ -56,7 +56,7 @@ if (isset($_POST['selectedfile'])) {
         }
 
         if(isset($_GET['action']) && $_GET['action'] == 'file_exists') {
-          echo "<div class='alert alert-danger alert-dismissible fade show' role='alert'>
+          echo "<div class='alert alert-danger alert-dismissible fade show mt-2' role='alert'>
             <i class='fas fa-exclamation-triangle'></i> Le fichier existe déjà
             <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
               <span aria-hidden='true'>&times;</span>
@@ -65,7 +65,7 @@ if (isset($_POST['selectedfile'])) {
         }
 
         if(isset($_GET['action']) && $_GET['action'] == 'norep') {
-          echo "<div class='alert alert-danger alert-dismissible fade show' role='alert'>
+          echo "<div class='alert alert-danger alert-dismissible fade show mt-2' role='alert'>
             <i class='fas fa-exclamation-triangle'></i> Erreur : nom de répertoire vide
             <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
               <span aria-hidden='true'>&times;</span>
@@ -74,7 +74,7 @@ if (isset($_POST['selectedfile'])) {
         }
 
         if(isset($_GET['action']) && $_GET['action'] == 'rep_exists') {
-          echo "<div class='alert alert-danger alert-dismissible fade show' role='alert'>
+          echo "<div class='alert alert-danger alert-dismissible fade show mt-2' role='alert'>
             <i class='fas fa-exclamation-triangle'></i> Le répertoire existe déjà
             <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
               <span aria-hidden='true'>&times;</span>
@@ -88,7 +88,7 @@ if (isset($_POST['selectedfile'])) {
         // créer un fichier
         echo "
         <div class=\"row\">
-          <div class=\"col-sm card p-2 m-2\">
+          <div class=\"col-sm card p-2 m-3\">
             <form action='ajouter.php' method='POST'>
               <div class='form-group'>
                 <label for='name'>Créer un nouveau fichier : </label><br>
@@ -106,7 +106,7 @@ if (isset($_POST['selectedfile'])) {
 
         // créer un répertoire
         echo "
-        <div class=\"col-sm card p-2 m-2\">
+        <div class=\"col-sm card p-2 m-3\">
           <form action='ajouterrep.php' method='POST'>
             <div class='form-group'>
               <label for='name'>Créer un nouveau répertoire : </label><br>
@@ -160,7 +160,7 @@ if (isset($_POST['selectedfile'])) {
           else $dir = './';
 
           $opendir = false;
-          if(is_dir($dir)) $opendir = @opendir($dir);
+          if(is_dir($dir)) $opendir = opendir($dir);
             if(!$opendir) {
               $dir = './';
               $opendir = opendir('./') or die();
@@ -171,10 +171,10 @@ if (isset($_POST['selectedfile'])) {
             if(substr($dir, 0, 2) == './') $dir = substr($dir, 2);
 
             echo '
-            <div class="container">
+            <div id="background" class="container">
               <div class="row">
                 <div class="col-sm mt-3">
-                  <table class="table table-sm table-hover mb-5">
+                  <table class="table table-sm mb-3 text-white">
                     <thead>
                       <tr>
                         <th scope="col">Nom</th>
@@ -203,11 +203,34 @@ if (isset($_POST['selectedfile'])) {
                   <td>
               ';
 
+              // on recherche le type de fichier
+              $finfo = finfo_open(FILEINFO_MIME_TYPE);
+              $type = finfo_file($finfo, $dir.$file);
+
+              // Todo: on peut aussi le faire avec un switch
+              if (isset($type)) {
+                 if (in_array($type, array("image/png", "image/jpeg", "image/gif"))) {
+                   $check = "<i class='far fa-image fa-2x'></i>";
+                 }
+                 elseif(in_array($type, array("text/plain"))) {
+                   $check = "<i class='fas fa-file fa-2x'></i>";
+                 }
+                 elseif(in_array($type, array("text/x-php"))) {
+                   $check = "<i class='fab fa-php fa-2x'></i>";
+                 }
+                 elseif(in_array($type, array("text/x-js"))) {
+                   $check = "<i class='fab fa-js fa-2x'></i>";
+                 }
+                 else {
+                   $check = "<i class='fas fa-file-alt fa-2x'></i>";
+                 }
+               }
+
               if(is_file($dir.$file)) {
-                echo '<i class="fas fa-file"></i> <a href="'.$dir.$file.'" title="'.$dir.$file.'">'.$file.'</a><br/>', "\n";
+                echo $check.' <a class="text-white" href="'.$dir.$file.'" title="'.$dir.$file.'">'.$file.'</a><br/>', "\n";
               }
-              elseif(is_dir($dir.$file) && $file != '.') {
-                echo '<i class="fas fa-folder-open"></i> <a href="?dir='.urlencode($dir.$file).'" title="'.$dir.$file.'">'.$file.'</a><br/>', "\n";
+              elseif(is_dir($dir.$file)) {
+                echo '<i class="fas fa-folder fa-2x"></i> <a class="text-white" href="?dir='.urlencode($dir.$file).'" title="'.$dir.$file.'">'.$file.'</a><br/>', "\n";
               }
             echo '</td>';
 
@@ -216,11 +239,22 @@ if (isset($_POST['selectedfile'])) {
             <td class="smalltext">'.$type.'</td>
             <td class="smalltext">'.$owner.'</td>
             <td class="smalltext">'.$date.'</td>
-            <td class="lastcol"><a href="supprimer.php?id='.$file.'" onclick="return confirm(\'Êtes-vous certain de vouloir supprimer ce fichier ?\')"><i class="fas fa-trash"></i></a></td>
             ';
 
-            echo '</tr>';
+            if(is_file($dir.$file)) {
+              if($file != 'ajouter.php' && $file != 'ajouterrep.php' && $file != 'functions.php' && $file != 'index.php' && $file != 'supprimer.php' && $file != 'supprimerrep.php') {
+                echo '<td class="lastcol"><a title="Supprimer '.$file.' ?" class="text-white trash" href="supprimer.php?id='.$file.'" onclick="return confirm(\'Êtes-vous certain de vouloir supprimer ce fichier ?\')"><i class="fas fa-trash"></i></a></td>';
+              }
+              else{
+                echo '<td class="lastcol"><i class="fas fa-trash text-muted"></i></td>';
+              }
             }
+            elseif(is_dir($dir.$file) && $file != '.') {
+              echo '<td class="lastcol"><a title="Supprimer le répertoire '.$dir.$file.' ?" class="text-white trash" href="supprimerrep.php?id='.$file.'" onclick="return confirm(\'Êtes-vous certain de vouloir supprimer répertoire ?\')"><i class="fas fa-trash"></i></a></td>';
+            }
+
+            echo '</tr>';
+          } //while
 
             echo '</tbody></table>';
 
