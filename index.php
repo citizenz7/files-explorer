@@ -1,6 +1,7 @@
 <?php include_once 'functions.php'; ?>
 
 <?php
+/*
 if (isset($_POST['selectedfile'])) {
   $selectedfile = $_POST['selectedfile'];
   //echo $selectedfile;
@@ -18,6 +19,7 @@ if (isset($_POST['selectedfile'])) {
     $replace = str_replace($home, "http://olivier/", $selectedfile);
     //echo $replace;
   }
+  */
 ?>
 
 <!DOCTYPE html>
@@ -34,10 +36,11 @@ if (isset($_POST['selectedfile'])) {
 
 <body>
 
-  <div class="container card mb-5">
+<div class="container-fluid">
+  <div class="container card mt-4 mb-4">
 
     <div class="row">
-      <div class="col-sm px-3 py-3 mt-3 bg-dark text-white text-center">
+      <div class="col-sm px-3 py-3 bg-dark text-white text-center">
         <h1>Files Manager</h1>
       </div>
     </div>
@@ -91,8 +94,9 @@ if (isset($_POST['selectedfile'])) {
           <div class=\"col-sm card p-2 m-3\">
             <form action='ajouter.php' method='POST'>
               <div class='form-group'>
-                <label for='name'>Créer un nouveau fichier : </label><br>
-                <input type='text' class='form-control-sm' name='name' placeholder='Entrez un nom de fichier' size='50'>
+                <label for='name'>Créer un nouveau fichier : </label><i class=\"fas fa-file fa-5x float-right text-primary\"></i>
+                <br>
+                <input type='text' class='form-control-sm' name='name' placeholder='Entrez un nom de fichier'>
                 <button onclick=\"return confirm('Êtes-vous certain de vouloir ajouter ce fichier ?')\" type='submit' name='submit' class='btn btn-primary btn-sm'>
                   Envoyer
                   </button>
@@ -109,8 +113,9 @@ if (isset($_POST['selectedfile'])) {
         <div class=\"col-sm card p-2 m-3\">
           <form action='ajouterrep.php' method='POST'>
             <div class='form-group'>
-              <label for='name'>Créer un nouveau répertoire : </label><br>
-              <input type='text' class='form-control-sm' name='namerep' placeholder='Entrez un nom de répertoire' size='50'>
+              <label for='name'>Créer un nouveau répertoire : </label><i class=\"fas fa-folder fa-5x float-right text-warning\"></i>
+              <br>
+              <input type='text' class='form-control-sm' name='namerep' placeholder='Entrez un nom de répertoire'>
               <button onclick=\"return confirm('Êtes-vous certain de vouloir créer ce répertoire ?')\" type='submit' name='submitrep' class='btn btn-primary btn-sm'>
                 Envoyer
               </button>
@@ -155,20 +160,29 @@ if (isset($_POST['selectedfile'])) {
         $breadcrumbs   = implode(' > ', $breadcrumbs);
         */
 
-        /* ---- TEST ----*/
-        if(!empty($_GET['dir'])) $dir = simplePath($_GET['dir']);
-          else $dir = './';
+        /* ---- fil d'ariane----*/
+        if(!empty($_GET['dir'])){
+          $dir = simplePath($_GET['dir']);
+        }
+        else{
+          $dir = './';
+        }
 
-          $opendir = false;
-          if(is_dir($dir)) $opendir = opendir($dir);
-            if(!$opendir) {
-              $dir = './';
-              $opendir = opendir('./') or die();
-            }
+        $opendir = false;
+        if(is_dir($dir)){
+          $opendir = opendir($dir);
+        }
+        if(!$opendir) {
+          $dir = './';
+          $opendir = opendir('./') or die();
+        }
 
-            echo '<div class="bg-info mt-3 text-white px-3 py-2">Chemin : <a class="text-white" href="?dir=./">Root</a> '.$dir.'</div>';
+        echo '<div class="bg-info mt-3 text-white px-3 py-2">Chemin : <a class="text-white" href="?dir=./">Root</a> '.$dir.'</div>';
 
-            if(substr($dir, 0, 2) == './') $dir = substr($dir, 2);
+        if(substr($dir, 0, 2) == './'){
+          $dir = substr($dir, 2);
+        }
+        /* ----- /fil d'ariane ----- */
 
             echo '
             <div id="background" class="container">
@@ -212,11 +226,17 @@ if (isset($_POST['selectedfile'])) {
                  if (in_array($type, array("image/png", "image/jpeg", "image/gif"))) {
                    $check = "<i class='far fa-image fa-2x'></i>";
                  }
+                 elseif(in_array($type, array("image/svg+xml"))) {
+                   $check = "<i class='fas fa-image fa-2x'></i>";
+                 }
+                 elseif(in_array($type, array("application/pdf"))) {
+                   $check = "<i class='fas fa-file-pdf fa-2x'></i>";
+                 }
                  elseif(in_array($type, array("text/plain"))) {
                    $check = "<i class='fas fa-file fa-2x'></i>";
                  }
                  elseif(in_array($type, array("text/x-php"))) {
-                   $check = "<i class='fab fa-php fa-2x'></i>";
+                   $check = "<i class='fab fa-php fa-2x text-info'></i>";
                  }
                  elseif(in_array($type, array("text/x-js"))) {
                    $check = "<i class='fab fa-js fa-2x'></i>";
@@ -230,7 +250,8 @@ if (isset($_POST['selectedfile'])) {
                 echo $check.' <a class="text-white" href="'.$dir.$file.'" title="'.$dir.$file.'">'.$file.'</a><br/>', "\n";
               }
               elseif(is_dir($dir.$file)) {
-                echo '<i class="fas fa-folder fa-2x"></i> <a class="text-white" href="?dir='.urlencode($dir.$file).'" title="'.$dir.$file.'">'.$file.'</a><br/>', "\n";
+                // urlencode : rajoute des %20 pour les espaces
+                echo '<i class="fas fa-folder fa-2x text-warning"></i> <a class="text-white" href="?dir='.urlencode($dir.$file).'" title="'.$dir.$file.'">'.$file.'</a><br/>', "\n";
               }
             echo '</td>';
 
@@ -242,7 +263,7 @@ if (isset($_POST['selectedfile'])) {
             ';
 
             if(is_file($dir.$file)) {
-              if($file != 'ajouter.php' && $file != 'ajouterrep.php' && $file != 'functions.php' && $file != 'index.php' && $file != 'supprimer.php' && $file != 'supprimerrep.php') {
+              if($file != 'ajouter.php' && $file != 'ajouterrep.php' && $file != 'functions.php' && $file != 'index.php' && $file != 'supprimer.php' && $file != 'style.css' && $file != 'supprimerrep.php' && $file != 'citizenz2.png' && $file != 'logo_acs_noir.png') {
                 echo '<td class="lastcol"><a title="Supprimer '.$file.' ?" class="text-white trash" href="supprimer.php?id='.$file.'" onclick="return confirm(\'Êtes-vous certain de vouloir supprimer ce fichier ?\')"><i class="fas fa-trash"></i></a></td>';
               }
               else{
@@ -405,13 +426,21 @@ if (isset($_POST['selectedfile'])) {
 </div>
 -->
 </div>
-<div class="container text-center pb-5">
-  <i class="fab fa-creative-commons-pd"></i> Olivier Prieur - Access Code School Nevers (58000) - Juin 2020
+<div class="container text-center pb-5 morph">
+  <div>
+  <a href="https://www.accesscodeschool.fr/" target="_blank">
+    <img src="logo_acs_noir.png" class="img-fluid imgfooter" alt="Logo ACS">
+  </a>
+  <p class="mt-3">
+    <i class="fab fa-creative-commons-pd"></i> Olivier Prieur - Access Code School Nevers (58000) - Juin 2020
+  </p>
+</div>
 </div>
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 
+</div>
 </body>
 
 </html>
