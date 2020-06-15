@@ -35,34 +35,3 @@
   color: red;
   transition: all 0.4s;
 }
-
-/*
-.zoom div img {
-	-webkit-transform: scale(1);
-	transform: scale(1);
-	-webkit-transition: .3s ease-in-out;
-	transition: .3s ease-in-out;
-}
-
-.zoom div:hover img {
-	-webkit-transform: scale(1.3);
-	transform: scale(1.3);
-}
-*/
-
-.morph div img {
-  /*width: 200px;
-  height: 150px;*/
-  -webkit-filter: grayscale(0) blur(0px);
-  filter: grayscale(0) blur(0px);
-  -webkit-transition: all 0.5s ease;
-  transition: all 0.5s ease;
-}
-
-.morph div:hover img {
-  /*width: 150px;
-  height: 150px;*/
-  border-radius: 50%;  /* on arrondit l'image */
-  -webkit-transform: rotate(360deg); /* rotation de l'image */
-  transform: rotate(360deg);
-}

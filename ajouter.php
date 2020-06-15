@@ -1,5 +1,25 @@
 <?php
 
+if(!empty($_GET['dir'])){
+  $dir = simplePath($_GET['dir']);
+}
+else{
+  $dir = './';
+}
+
+$opendir = false;
+if(is_dir($dir)){
+  $opendir = opendir($dir);
+}
+if(!$opendir) {
+  $dir = './';
+  $opendir = opendir('./') or die();
+}
+
+if(substr($dir, 0, 2) == './'){
+  $dir = substr($dir, 2);
+}
+
 // si on a cliqué sur le bouton "Créer un nouveau fichier"...
 if (isset($_POST['submit'])) {
 
@@ -15,7 +35,7 @@ if (isset($_POST['submit'])) {
       $nom_file = htmlspecialchars($_POST['name']);
 
       // création du fichier
-      $f = fopen($nom_file, "x+");
+      $f = fopen($dir.$nom_file, "x+");
 
       // fermeture
       fclose($f);
